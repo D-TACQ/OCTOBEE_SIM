@@ -52,9 +52,9 @@ for x in np.linspace(-2, 2, grid_density):
 # display the collection of magnets and the sensor's location
 fig = magpy.show(tokamak, sensor, backend="plotly")
 
-results = []
+magnitude_results = []
 for x in results.values():
-    results.append(np.sqrt(x.dot(x)))
+    magnitude_results.append(np.sqrt(x.dot(x)))
 
 fig = magpy.show(tokamak, sensor, backend="plotly")
 
