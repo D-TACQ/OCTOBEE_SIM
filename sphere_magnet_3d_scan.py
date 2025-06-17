@@ -3,6 +3,7 @@ import numpy as np
 
 import magpylib as magpy
 
+
 def compute_b_field(grid):
     # Compute the B-field of a sphere magnet on the grid
     sphere = magpy.magnet.Sphere(polarization=(500, 0, 500), diameter=2.0)
@@ -10,8 +11,10 @@ def compute_b_field(grid):
     return B
 
 
-def plot(P1, P2, B, plane="xy"):
+def create_streamplot(P1, P2, B, plane="xy"):
     """
+    Creates a streamplot along the plane.
+
     P1 and P2 are the plane data (e.g. P1 = X and P2 = Y if plane = xy)
     plane = xy, xz, or yz
     """
@@ -90,11 +93,28 @@ if __name__ == "__main__":
     ts = np.linspace(-5, 5, 40)
     grid_yz = np.array([[(0, y, z) for y in ts] for z in ts])
     _, Yyz, Zyz = np.moveaxis(grid_yz, 2, 0)
-    
+
+    # Create an observer grid in the xyz volume
+    ts = np.linspace(-5, 5, 40)
+    grid_xyz = np.array([[[(x, y, z) for x in ts] for y in ts] for z in ts])
+
     Bxz = compute_b_field(grid_xz)
     Bxy = compute_b_field(grid_xy)
     Byz = compute_b_field(grid_yz)
-    plot(Xxz, Zxz, Bxz, plane="xz")
-    plot(Xxy, Yxy, Bxy, plane="xy")
-    plot(Yyz, Zyz, Byz, plane="yz")
+
+    Bxyz = compute_b_field(grid_xyz)
+
+    create_streamplot(Xxz, Zxz, Bxz, plane="xz")
+    create_streamplot(Xxy, Yxy, Bxy, plane="xy")
+    create_streamplot(Yyz, Zyz, Byz, plane="yz")
     plt.show()
+    print(f"Shape of Bxyz {Bxyz.shape}")
+    magnitudes = np.linalg.norm(Bxyz, axis=3)
+    max_magnitude = magnitudes.max()
+    index_max_mag = np.unravel_index(magnitudes.argmax(), magnitudes.shape)
+    print(f"index of max magnitude is {index_max_mag} and value is {max_magnitude}")
+    sorted_flattened_magnitudes = magnitudes.flatten()
+    sorted_flattened_magnitudes.sort()
+    plt.hist(sorted_flattened_magnitudes)
+    plt.show()
+
