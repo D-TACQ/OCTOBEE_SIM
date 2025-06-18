@@ -2,6 +2,7 @@ env_octobee
 __pycache__
 
 # data
+data/
 *.npy
 
 # temp files
