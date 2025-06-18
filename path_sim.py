@@ -69,6 +69,8 @@ def walk_sequence(sequence_of_steps):
             yield step
 
 
+origin = [0, 0, 0]
+
 pos_yz_sequence = [pos_y_sweep, pos_z_shift, neg_y_sweep, pos_z_shift]
 neg_yz_sequence = [pos_y_sweep, neg_z_shift, neg_y_sweep, neg_z_shift]
 # neg_yz_sequence = [pos_y_sweep, neg_z_shift, neg_y_sweep, neg_z_shift]
@@ -163,18 +165,27 @@ full_sequence = [
     x_shift,
 ]
 
-origin = [0, 0, 0]
-position = np.array(origin)
-position_history = [origin.copy()]
 
-for vector in walk_sequence(full_sequence):
-    position += vector
-    position_history.append(position.copy())
-    # debug print
-    # print(position)
-    # build the dataset here with the Bx,By,Bz values
-    # SPAD
-    # counters
+def run():
+    position = np.array(origin)
+    position_history = [origin.copy()]
+    for vector in walk_sequence(full_sequence):
+        position += vector
+        position_history.append(position.copy())
+        # debug print
+        # print(position)
+        # build the dataset here with the Bx,By,Bz values
+        # SPAD
+        # counters
+    return position_history
+
+
+def initial_position(position_history):
+    return position_history[0]
+
+
+def final_position(position_history):
+    return position_history[-1]
 
 
 def plot_path(path_history):
@@ -206,9 +217,9 @@ def plot_path(path_history):
     )
 
     # Set labels and title
-#    ax.set_xlabel("X axis (mm)")
-##    ax.set_ylabel("Y axis (mm)")
-#    ax.set_z_label("Z axis (mm)")
+    # ax.set_xlabel("X axis (mm)")
+    # ax.set_ylabel("Y axis (mm)")
+    # ax.set_z_label("Z axis (mm)")
     ax.set_title("3D Linear Scan Path Simulation")
     ax.legend()
 
@@ -217,8 +228,14 @@ def plot_path(path_history):
     plt.show()
 
 
-plot_path(position_history)
+if __name__ == "__main__":
+    position_history = run()
 
-print(f"starting at origin {origin}")
+    print(initial_position(position_history))
+    print(final_position(position_history))
 
-print(f"ending at {position}")
+    plot_path(position_history)
+
+    print(f"starting at origin {origin}")
+
+    print(f"ending at {final_position(position_history)}")
