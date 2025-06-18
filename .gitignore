@@ -1,2 +1,8 @@
 env_octobee
 __pycache__
+
+# data
+*.npy
+
+# temp files
+*.swp
