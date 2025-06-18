@@ -27,11 +27,15 @@ def create_linspace(left, right, spacing):
 
 
 def volume_of_space(tsx, tsy, tsz):
-    return (tsx[-1]-tsx[0]) * (tsy[-1]-tsy[0]) * (tsz[-1]-tsz[0])
+    return (tsx[-1] - tsx[0]) * (tsy[-1] - tsy[0]) * (tsz[-1] - tsz[0])
 
 
 def points_in_space(tsx, tsy, tsz):
-    return (tsx[-1]-tsx[0]) * len(tsx) + (tsy[-1]-tsy[0]) * len(tsy) + (tsz[-1]-tsz[0]) * len(tsz)
+    return (
+        (tsx[-1] - tsx[0]) * len(tsx)
+        + (tsy[-1] - tsy[0]) * len(tsy)
+        + (tsz[-1] - tsz[0]) * len(tsz)
+    )
 
 
 if __name__ == "__main__":
@@ -98,4 +102,3 @@ if __name__ == "__main__":
     a = np.array([1, 2, 3])
     a.tofile("hello.npy")
     data_writer.to_file(a, "hello_data_writer.npy")
-

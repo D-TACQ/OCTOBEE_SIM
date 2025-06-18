@@ -66,5 +66,7 @@ print()
 # Compute the H-field at the sensor.
 H = magpy.getH(ring, sensor)
 print(f"H-field: {H.round()}")
-print(f"computed with sensor at {sensor.position} {sensor.orientation.as_rotvec(degrees=True)}")
+print(
+    f"computed with sensor at {sensor.position} {sensor.orientation.as_rotvec(degrees=True)}"
+)
 print()

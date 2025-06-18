@@ -20,23 +20,23 @@ def create_streamplot(P1, P2, B, plane="xy"):
     """
     # Create a Matplotlib figure
     fig, ax = plt.subplots()
-    
+
     if plane.lower() == "xy":
         B1, B2, _ = np.moveaxis(B, 2, 0)
         log10_norm_B = np.log10(np.linalg.norm(B, axis=2))
-        xlabel = 'x'
-        ylabel = 'y'
+        xlabel = "x"
+        ylabel = "y"
     if plane.lower() == "xz":
         # Original, others need modded
         B1, _, B2 = np.moveaxis(B, 2, 0)
         log10_norm_B = np.log10(np.linalg.norm(B, axis=2))
-        xlabel = 'x'
-        ylabel = 'z'
+        xlabel = "x"
+        ylabel = "z"
     if plane.lower() == "yz":
         _, B1, B2 = np.moveaxis(B, 2, 0)
         log10_norm_B = np.log10(np.linalg.norm(B, axis=2))
-        xlabel = 'y'
-        ylabel = 'z'
+        xlabel = "y"
+        ylabel = "z"
 
     # Display the B-field with streamplot using log10-scaled
     # color function and linewidth
@@ -117,4 +117,3 @@ if __name__ == "__main__":
     sorted_flattened_magnitudes.sort()
     plt.hist(sorted_flattened_magnitudes)
     plt.show()
-

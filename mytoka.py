@@ -19,6 +19,7 @@ polarization_strength = 2.0  # Polarization
 # Create a sensor for measuring the field
 sensor = magpy.Sensor()
 
+
 def make_cylinder_seg(height=0.6):
     # Create a ring magnet with magnetic polarization
     inner_r = 1  # Inner radius of the coil's curvature [m]
