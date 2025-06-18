@@ -28,7 +28,6 @@ import ast
 import numpy as np
 
 # use a numpy structured array to define data and write it out???
-
 n_sensors = 8
 channel_def_strings = ""
 for n in range(1, n_sensors + 1):
@@ -41,11 +40,17 @@ final_strings = ["XPOS", "YPOS", "ZPOS", "CNT", "USEC", "USR1", "USR2", "USR3"]
 for n in final_strings:
     channel_def_strings += f" ('{n}','<i4'),"
 
-print(channel_def_strings)
-
 channel_def = ast.literal_eval(f"[{channel_def_strings}]")
 
-print(channel_def)
+data = np.zeros(16, dtype=channel_def)
 
-data = np.zeros(16,dtype=channel_def)
-print(data)
+
+def to_file(data, filename):
+    data.tofile(filename)
+
+
+if __name__ == "__main__":
+
+    print(channel_def_strings)
+    print(channel_def)
+    print(data)
