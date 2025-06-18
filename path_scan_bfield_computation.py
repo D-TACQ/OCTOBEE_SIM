@@ -122,5 +122,5 @@ if __name__ == "__main__":
         "\nCoordinate Point [170000]:", sampled_points[170000]
     )  # End of first Y-sweep
     print("B-field Vector   [170000]:", B_field_data[170000])
-    B_field_data.tofile("B-field.npy")
-    sampled_points.tofile("simulated_path.npy")
+    np.save("B-field.npy", B_field_data)
+    np.save("simulated_path.npy", sampled_points)
