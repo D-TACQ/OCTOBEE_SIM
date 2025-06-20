@@ -1,5 +1,12 @@
+"""
+Writes simulation data to a file format that matches the ACQ400 data format.
+
+Simulation data is scaled here to use the full dynamic range available to 
+the AI module selected.
+"""
+
 import numpy as np
-from config import FILES, SCAN_SETUP, SYSTEM_PARAMETERS
+from config import FILES, SAMPLING, SCAN_SETUP, SYSTEM_PARAMETERS
 import data_writer
 
 
@@ -20,6 +27,22 @@ def n_samples_to_elapsed_usec(sample_rate, n_samples):
     return useconds
 
 
+def find_optimum_gain(arr):
+    """Finds optimum gain for array data by using maximum value of array
+    and dynamic range of selected ADC"""
+    dynamic_range_bits = SAMPLING['dynamic_range_bits']
+    m = arr.max()
+    n = arr.min()
+    dynamic_range = 2**dynamic_range_bits
+    pos_range = dynamic_range // 2
+    neg_range = -1 * dynamic_range // 2
+    gain1 = pos_range // m
+    gain2 = neg_range // n
+    if gain1 > gain2:
+        return gain1
+    else:
+        return gain2
+
 if __name__ == "__main__":
     filename_list = FILES["input_list"]
     N_SENSORS = SYSTEM_PARAMETERS["sensor_count"]
@@ -37,14 +60,19 @@ if __name__ == "__main__":
     sensor_number = 1
     for filename in filename_list:
         a = np.load(filename)
+        gain = find_optimum_gain(a)
         print(a.shape)
         selection = a[0:n_samples, :]
         print(selection.shape)
 
-        result[f"S{sensor_number}X"] = selection[:, 0]
-        result[f"S{sensor_number}Y"] = selection[:, 1]
-        result[f"S{sensor_number}Z"] = selection[:, 2]
-        result[f"S{sensor_number}T"] = selection[:, 0]
+        gain0 = find_optimum_gain(selection[:, 0])
+        gain1 = find_optimum_gain(selection[:, 1])
+        gain2 = find_optimum_gain(selection[:, 2])
+        gain3 = find_optimum_gain(selection[:, 0])
+        result[f"S{sensor_number}X"] = selection[:, 0] * gain0
+        result[f"S{sensor_number}Y"] = selection[:, 1] * gain1
+        result[f"S{sensor_number}Z"] = selection[:, 2] * gain2
+        result[f"S{sensor_number}T"] = selection[:, 0] * gain3
         sensor_number += 1
 
     elapsed_usec = n_samples_to_elapsed_usec(10000, n_samples)

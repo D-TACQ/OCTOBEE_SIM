@@ -25,6 +25,7 @@ sampling:
   min_rate_hz: 10000
   max_rate_hz: 200000
   clock_start: 0
+  dynamic_range_bits: 16
 
 # Scan Motion Physics
 motion_profile:
