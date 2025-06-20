@@ -3,9 +3,13 @@ import numpy as np
 
 import magpylib as magpy
 
+from config import SIMULATION_OBJECTS
+
 
 def create():
-    return magpy.magnet.Sphere(polarization=(500, 0, 500), diameter=2.0)
+    D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
+    P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
+    return magpy.magnet.Sphere(polarization=P, diameter=D)
 
 
 def compute_b_field(magnet, grid):

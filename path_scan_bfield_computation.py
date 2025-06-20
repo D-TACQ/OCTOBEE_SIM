@@ -2,6 +2,8 @@ import numpy as np
 import time
 import magpylib as magpy
 
+from config import FILES, SCAN_SETUP, SAMPLING, SYSTEM_PARAMETERS, SIMULATION_OBJECTS
+
 
 def simulate_constant_velocity_path():
     """
@@ -9,18 +11,21 @@ def simulate_constant_velocity_path():
     This generates a PATH, not a grid.
     """
     # System Parameters
-    SAMPLE_RATE = 10000  # samples/sec
+    SAMPLE_RATE = SAMPLING["rate_hz"]  # samples/sec
 
     # Scan Dimensions (mm) and Repetitions
-    MAX_X, MAX_Y, MAX_Z = 300.0, 300.0, 300.0
-    STEP_Z, STEP_X = 30.0, 10.0
-    N_X_REPEATS = 30
-    N_Z_STEPS_PER_PLANE = 10
+    MAX_X = SCAN_SETUP["dimensions_mm"]["max_x"]
+    MAX_Y = SCAN_SETUP["dimensions_mm"]["max_y"]
+    MAX_Z = SCAN_SETUP["dimensions_mm"]["max_z"]
+    STEP_Z = SCAN_SETUP["step_sizes_mm"]["z"]
+    STEP_X = SCAN_SETUP["step_sizes_mm"]["x"]
+    N_X_REPEATS = SCAN_SETUP["repetitions"]["x_axis"]
+    N_Z_STEPS_PER_PLANE = SCAN_SETUP["repetitions"]["z_steps_per_plane"]
 
     # Scan Durations (seconds)
-    TIME_Y_SCAN = 17.0
-    TIME_Z_STEP = 11.0
-    TIME_X_STEP = 7.0
+    TIME_Y_SCAN = SCAN_SETUP["durations_s"]["y_scan"]
+    TIME_Z_STEP = SCAN_SETUP["durations_s"]["z_scan"]
+    TIME_X_STEP = SCAN_SETUP["durations_s"]["x_scan"]
 
     # Calculate samples per movement
     SAMPLES_PER_Y_SCAN = int(SAMPLE_RATE * TIME_Y_SCAN)
@@ -82,6 +87,9 @@ def simulate_constant_velocity_path():
 
 
 if __name__ == "__main__":
+    scan_path_filepath = FILES["recorded_scan_path"]
+    bfield_filepath = FILES["input_list"][0]
+
     # 1. Generate the entire path of sample coordinates
     path_generation_start = time.time()
     sampled_points = simulate_constant_velocity_path()
@@ -97,7 +105,14 @@ if __name__ == "__main__":
     b_field_start = time.time()
 
     # Define the magnetic source
-    source_sphere = magpy.magnet.Sphere(polarization=(500, 0, 500), diameter=2.0)
+    D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
+    P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
+    posx = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
+    posy = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
+    posz = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+    source_sphere = magpy.magnet.Sphere(
+        position=(posx, posy, posz), polarization=P, diameter=D
+    )
 
     # Calculate the B-field for every single point in our path
     # The 'sampled_points' array is the "grid" that getB needs.
@@ -117,10 +132,8 @@ if __name__ == "__main__":
     print("\nExample Data:")
     print("Coordinate Point [0]:", sampled_points[0])
     print("B-field Vector   [0]:", B_field_data[0])
-
-    print(
-        "\nCoordinate Point [170000]:", sampled_points[170000]
-    )  # End of first Y-sweep
-    print("B-field Vector   [170000]:", B_field_data[170000])
-    np.save("B-field.npy", B_field_data)
-    np.save("simulated_path.npy", sampled_points)
+    random_point = np.random.randint(0, sampled_points.shape[0] // 2)
+    print(f"\nCoordinate Point [{random_point}]:", sampled_points[random_point])
+    print(f"B-field Vector   [{random_point}]:", B_field_data[random_point])
+    np.save(bfield_filepath, B_field_data)
+    np.save(scan_path_filepath, sampled_points)

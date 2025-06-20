@@ -3,10 +3,14 @@ import numpy as np
 
 import magpylib as magpy
 
+from config import SIMULATION_OBJECTS
+
 
 def compute_b_field(grid):
+    D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
+    P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
     # Compute the B-field of a sphere magnet on the grid
-    sphere = magpy.magnet.Sphere(polarization=(500, 0, 500), diameter=2.0)
+    sphere = magpy.magnet.Sphere(polarization=P, diameter=D)
     B = sphere.getB(grid)
     return B
 

@@ -4,9 +4,7 @@
 |------|----|----|----|----|----|----|----|----|----|----|----|----|-----|-----|-----|-----|-----|
 | AI   |CH01|CH02|CH03|CH04|CH05|CH06| .. |CH31|CH32|AQB1|AQB2|AQB3|SPAD0|SPAD1|SPAD2|SPAD3|SPAD4|
 | FUNC |S1X |S1Y |S1Z |S1T |S2X |S2Y | .. |S8Z |S8T |XPOS|YPOS|ZPOS| CNT |USEC |USR1 |USR2 |USR3 |
-"""
 
-"""
 channel1.values = [1,2,3]
 
 channel8.values = [2,3,4]
@@ -28,6 +26,7 @@ uses a numpy structured array to define data and writes it out
 
 import ast
 import numpy as np
+from config import SYSTEM_PARAMETERS
 
 
 def n_sensors_dtype_generator(n_sensors):
@@ -60,7 +59,7 @@ def array_to_raw_binary_file(data, filename):
 
 
 if __name__ == "__main__":
-    n_sensors = 8
+    n_sensors = SYSTEM_PARAMETERS["sensor_count"]
     generated_dtype = n_sensors_dtype_generator(n_sensors)
     print(generated_dtype)
     # Generating a dataset of zeros (but of the correct dtype)

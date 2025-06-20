@@ -5,12 +5,13 @@ Offset an existing path by a constant along one, two or three axes
 import numpy as np
 import time
 import magpylib as magpy
-
+from config import FILES, SIMULATION_OBJECTS, SYSTEM_PARAMETERS
 
 if __name__ == "__main__":
+    scan_path_filename = FILES["recorded_scan_path"]
     # Load path of sample coordinates
     path_generation_start = time.time()
-    sampled_points = np.load("data/simulated_path.npy")
+    sampled_points = np.load(scan_path_filename)
     print(f"Shape of loaded array {sampled_points.shape}")
     path_generation_end = time.time()
     print(
@@ -24,10 +25,16 @@ if __name__ == "__main__":
     print(f"sampled_points {sampled_points[245785]}")
     print(f"sampled_points {sampled_points[-1]}")
 
-    z_offset_values = (0, 5, 10, 15, 20, 25, 30, 35)
+    D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
+    P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
+    Cx = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
+    Cy = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
+    Cz = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+
+    z_offset_values = SYSTEM_PARAMETERS["sensor_offsets"]
     for z_offset_value in z_offset_values:
 
-        sampled_points = np.load("data/simulated_path.npy")
+        sampled_points = np.load(scan_path_filename)
         z_offset = np.array([0, 0, z_offset_value])
         sampled_points = sampled_points + z_offset
 
@@ -39,7 +46,10 @@ if __name__ == "__main__":
         b_field_start = time.time()
 
         # Define the magnetic source
-        source_sphere = magpy.magnet.Sphere(polarization=(500, 0, 500), diameter=2.0)
+
+        source_sphere = magpy.magnet.Sphere(
+            position=(Cx, Cy, Cz), polarization=P, diameter=D
+        )
 
         # Calculate the B-field for every single point in our path
         # The 'sampled_points' array is the "grid" that getB needs.
@@ -66,5 +76,5 @@ if __name__ == "__main__":
             "\nCoordinate Point [170000]:", sampled_points[170000]
         )  # End of first Y-sweep
         print("B-field Vector   [170000]:", B_field_data[170000])
-        np.save(f"B-field_zoff_{z_offset_value}.npy", B_field_data)
+        np.save(f"data/B-field_zoff_{z_offset_value}.npy", B_field_data)
         # np.save("simulated_path.npy", sampled_points)

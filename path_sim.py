@@ -1,6 +1,6 @@
 # Path simulator
 """
-# Definition of the linear scan to be performed
+Definition of the linear scan to be performed
 
 X-sweeps: 2 mm/s, 1 mm/s2
 Y-sweeps: 20 mm/s, 10 mm/s2
@@ -17,12 +17,13 @@ repeat 10 times (10 x 56 s = 560 s = 9.33 min)
 10 mm along XL   (2s accelerate + 2s decelerate + 3s constant V)
 
 repeat 30 times (30 x 560 s = 16800 s = 280 min = 4.67 hours)
-
-
-
 """
 import numpy as np
 import matplotlib.pyplot as plt
+
+import magpylib as magpy
+
+from config import FILES, SYSTEM_PARAMETERS, SAMPLING, SIMULATION_OBJECTS
 
 # All a in mm/s**2
 x_a = 1
@@ -36,23 +37,31 @@ z_maxv = 3
 
 # time step is related to sample rate
 # sample rate in samples/s
-min_sample_rate = 10000
-max_sample_rate = 200000
+min_sample_rate = SAMPLING["min_rate_hz"]
+max_sample_rate = SAMPLING["max_rate_hz"]
 
 # sample freq in Hz
 min_sample_freq = min_sample_rate / 1
 max_sample_freq = max_sample_rate / 1
 
+sample_clock_start = SAMPLING["clock_start"]
 # one tick per mm
-encoder_resolution = 1
+encoder_resolution = SYSTEM_PARAMETERS["encoder_resolution"]
 
-sample_clock_start = 0
 
 pos_y_sweep = np.array([0, 300, 0])
 pos_z_shift = np.array([0, 0, 15])
 neg_y_sweep = -1 * pos_y_sweep
 neg_z_shift = -1 * pos_z_shift
 x_shift = np.array([10, 0, 0])
+
+# dummy magnet
+# add a sphere that defines the system under test
+D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
+Xs = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
+Ys = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
+Zs = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+obj_sphere = magpy.magnet.Sphere(position=(Xs, Ys, Zs), diameter=D)
 
 
 def walk_sequence(sequence_of_steps):
@@ -69,7 +78,7 @@ def walk_sequence(sequence_of_steps):
             yield step
 
 
-origin = [0, 0, 0]
+origin = SYSTEM_PARAMETERS["origin_mm"]
 
 pos_yz_sequence = [pos_y_sweep, pos_z_shift, neg_y_sweep, pos_z_shift]
 neg_yz_sequence = [pos_y_sweep, neg_z_shift, neg_y_sweep, neg_z_shift]
@@ -205,9 +214,9 @@ def plot_path(path_history):
     fig = plt.figure(figsize=(12, 9))
     ax = fig.add_subplot(111, projection="3d")
 
+    magpy.show(obj_sphere, canvas=ax, style={"color": "grey", "opacity": 0.4})
     # Plot the path with a line and markers for each point
     ax.plot(x_coords, y_coords, z_coords, marker=".", markersize=2, linestyle="-")
-
     # Highlight the start and end points
     ax.scatter(
         x_coords[0], y_coords[0], z_coords[0], color="lime", s=100, label="Start"
@@ -215,6 +224,26 @@ def plot_path(path_history):
     ax.scatter(
         x_coords[-1], y_coords[-1], z_coords[-1], color="red", s=100, label="End"
     )
+
+    # Calculate the extents of your path data
+    x_min, x_max = np.min(x_coords), np.max(x_coords)
+    y_min, y_max = np.min(y_coords), np.max(y_coords)
+    z_min, z_max = np.min(z_coords), np.max(z_coords)
+
+    # Determine the center of the path
+    x_center, y_center, z_center = (
+        np.mean([x_min, x_max]),
+        np.mean([y_min, y_max]),
+        np.mean([z_min, z_max]),
+    )
+
+    # Determine the largest range needed to encompass the whole path
+    max_range = np.array([x_max - x_min, y_max - y_min, z_max - z_min]).max()
+
+    # Set the limits to be a cube centered on the path
+    ax.set_xlim(x_center - max_range / 2, x_center + max_range / 2)
+    ax.set_ylim(y_center - max_range / 2, y_center + max_range / 2)
+    ax.set_zlim(z_center - max_range / 2, z_center + max_range / 2)
 
     # Set labels and title
     # ax.set_xlabel("X axis (mm)")
@@ -230,12 +259,8 @@ def plot_path(path_history):
 
 if __name__ == "__main__":
     position_history = run()
-
     print(initial_position(position_history))
     print(final_position(position_history))
-
     plot_path(position_history)
-
     print(f"starting at origin {origin}")
-
     print(f"ending at {final_position(position_history)}")
