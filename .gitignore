@@ -1,0 +1,10 @@
+env_octo-bee
+__pycache__
+
+# data
+data/
+*.npy
+*.bin
+
+# temp files
+*.swp

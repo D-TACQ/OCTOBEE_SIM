@@ -1,0 +1,79 @@
+# File and Data Configuration
+files:
+  recorded_scan_path: "data/recorded_scan_path.npy"
+  input_list:
+    - "data/B-field_zoff_0.npy"
+    - "data/B-field_zoff_5.npy"
+    - "data/B-field_zoff_10.npy"
+    - "data/B-field_zoff_15.npy"
+    - "data/B-field_zoff_20.npy"
+    - "data/B-field_zoff_25.npy"
+    - "data/B-field_zoff_30.npy"
+    - "data/B-field_zoff_35.npy"
+  output_muxed_result: "data/binary_data.bin"
+
+# System & Sensor Parameters
+system_parameters:
+  sensor_count: 8
+  sensor_offsets: [0, 5, 10, 15, 20, 25, 30, 35]
+  encoder_resolution: 1 # Unit: ticks/mm
+  origin_mm: [0, 0, 0]
+
+# Sampling Configuration
+sampling:
+  rate_hz: 10000
+  min_rate_hz: 10000
+  max_rate_hz: 200000
+  clock_start: 0
+  dynamic_range_bits: 16
+
+# Scan Motion Physics
+motion_profile:
+  acceleration_mm_per_s2:
+    x: 1
+    y: 10
+    z: 3
+  max_velocity_mm_per_s:
+    x: 2
+    y: 20
+    z: 3
+
+# Scan Sequence & Dimensions
+scan_setup:
+  dimensions_mm:
+    max_x: 300.0
+    max_y: 300.0
+    max_z: 300.0
+  step_sizes_mm:
+    x: 10.0
+    z: 30.0
+  repetitions:
+    x_axis: 30
+    z_steps_per_plane: 10
+  scan_counts: # Number of scans in each direction
+    x: 1
+    y: 25
+    z: 25
+  durations_s:
+    y_scan: 17.0
+    z_scan: 11.0
+    x_scan: 7.0
+
+# Simulation-specific Objects
+simulation_objects:
+  system_under_test:
+    type: "Sphere"
+    diameter: 150
+    polarization: [500, 0, 500]
+    position_mm: {x: 150, y: 150, z: 150}
+
+  scan_vectors:
+    pos_y_sweep: [0, 300, 0]
+    pos_z_shift: [0, 0, 15]
+    x_shift: [10, 0, 0]
+
+# Initial State Variables for Simulation Runtime
+# These are typically not part of a static config file but represent the starting state.
+initial_runtime_state:
+  current_position: {x: 0.0, y: 0.0, z: 0.0}
+  path_segments: []
