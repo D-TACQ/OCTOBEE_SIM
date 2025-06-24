@@ -23,17 +23,17 @@ import matplotlib.pyplot as plt
 
 import magpylib as magpy
 
-from config import FILES, SYSTEM_PARAMETERS, SAMPLING, SIMULATION_OBJECTS
+from config import FILES, MOTION_PROFILE, SYSTEM_PARAMETERS, SAMPLING, SIMULATION_OBJECTS
 
-# All a in mm/s**2
-x_a = 1
-y_a = 10
-z_a = 3
+# All a in m/s**2
+x_a = MOTION_PROFILE['acceleration_m_per_s2']['x']
+y_a = MOTION_PROFILE['acceleration_m_per_s2']['y']
+z_a = MOTION_PROFILE['acceleration_m_per_s2']['z']
 
-# All v in mm/s
-x_maxv = 2
-y_maxv = 20
-z_maxv = 3
+# All v in m/s
+x_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['x']
+y_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['y']
+z_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['z']
 
 # time step is related to sample rate
 # sample rate in samples/s
@@ -45,7 +45,6 @@ min_sample_freq = min_sample_rate / 1
 max_sample_freq = max_sample_rate / 1
 
 sample_clock_start = SAMPLING["clock_start"]
-# one tick per mm
 encoder_resolution = SYSTEM_PARAMETERS["encoder_resolution"]
 
 
@@ -58,9 +57,9 @@ x_shift = np.array([10, 0, 0])
 # dummy magnet
 # add a sphere that defines the system under test
 D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
-Xs = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
-Ys = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
-Zs = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+Xs = SIMULATION_OBJECTS["system_under_test"]["position_m"]["x"]
+Ys = SIMULATION_OBJECTS["system_under_test"]["position_m"]["y"]
+Zs = SIMULATION_OBJECTS["system_under_test"]["position_m"]["z"]
 obj_sphere = magpy.magnet.Sphere(position=(Xs, Ys, Zs), diameter=D)
 
 
@@ -78,7 +77,7 @@ def walk_sequence(sequence_of_steps):
             yield step
 
 
-origin = SYSTEM_PARAMETERS["origin_mm"]
+origin = SYSTEM_PARAMETERS["origin_m"]
 
 pos_yz_sequence = [pos_y_sweep, pos_z_shift, neg_y_sweep, pos_z_shift]
 neg_yz_sequence = [pos_y_sweep, neg_z_shift, neg_y_sweep, neg_z_shift]
@@ -176,7 +175,7 @@ full_sequence = [
 
 
 def run():
-    position = np.array(origin)
+    position = np.array(origin, dtype=np.float64)
     position_history = [origin.copy()]
     for vector in walk_sequence(full_sequence):
         position += vector
@@ -246,9 +245,9 @@ def plot_path(path_history):
     ax.set_zlim(z_center - max_range / 2, z_center + max_range / 2)
 
     # Set labels and title
-    # ax.set_xlabel("X axis (mm)")
-    # ax.set_ylabel("Y axis (mm)")
-    # ax.set_z_label("Z axis (mm)")
+    # ax.set_xlabel("X axis (m)")
+    # ax.set_ylabel("Y axis (m)")
+    # ax.set_z_label("Z axis (m)")
     ax.set_title("3D Linear Scan Path Simulation")
     ax.legend()
 

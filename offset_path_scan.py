@@ -3,6 +3,7 @@ Offset an existing path by a constant along one, two or three axes
 """
 
 import numpy as np
+import os
 import time
 import magpylib as magpy
 from config import FILES, SIMULATION_OBJECTS, SYSTEM_PARAMETERS
@@ -27,9 +28,9 @@ if __name__ == "__main__":
 
     D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
     P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
-    Cx = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
-    Cy = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
-    Cz = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+    Cx = SIMULATION_OBJECTS["system_under_test"]["position_m"]["x"]
+    Cy = SIMULATION_OBJECTS["system_under_test"]["position_m"]["y"]
+    Cz = SIMULATION_OBJECTS["system_under_test"]["position_m"]["z"]
 
     z_offset_values = SYSTEM_PARAMETERS["sensor_offsets"]
     for z_offset_value in z_offset_values:
@@ -76,5 +77,8 @@ if __name__ == "__main__":
             "\nCoordinate Point [170000]:", sampled_points[170000]
         )  # End of first Y-sweep
         print("B-field Vector   [170000]:", B_field_data[170000])
-        np.save(f"data/B-field_zoff_{z_offset_value}.npy", B_field_data)
+        output_dir = FILES["output_dir"]
+        os.makedirs(output_dir, exist_ok=True) 
+        z_offset_file_tag = int(z_offset_value * 1000)
+        np.save(f"{output_dir}/B-field_zoff_{z_offset_value}.npy", B_field_data)
         # np.save("simulated_path.npy", sampled_points)

@@ -1,5 +1,6 @@
-import numpy as np
+import os
 import time
+import numpy as np
 import magpylib as magpy
 
 from config import FILES, SCAN_SETUP, SAMPLING, SYSTEM_PARAMETERS, SIMULATION_OBJECTS
@@ -13,12 +14,12 @@ def simulate_constant_velocity_path():
     # System Parameters
     SAMPLE_RATE = SAMPLING["rate_hz"]  # samples/sec
 
-    # Scan Dimensions (mm) and Repetitions
-    MAX_X = SCAN_SETUP["dimensions_mm"]["max_x"]
-    MAX_Y = SCAN_SETUP["dimensions_mm"]["max_y"]
-    MAX_Z = SCAN_SETUP["dimensions_mm"]["max_z"]
-    STEP_Z = SCAN_SETUP["step_sizes_mm"]["z"]
-    STEP_X = SCAN_SETUP["step_sizes_mm"]["x"]
+    # Scan Dimensions (m) and Repetitions
+    MAX_X = SCAN_SETUP["dimensions_m"]["max_x"]
+    MAX_Y = SCAN_SETUP["dimensions_m"]["max_y"]
+    MAX_Z = SCAN_SETUP["dimensions_m"]["max_z"]
+    STEP_Z = SCAN_SETUP["step_sizes_m"]["z"]
+    STEP_X = SCAN_SETUP["step_sizes_m"]["x"]
     N_X_REPEATS = SCAN_SETUP["repetitions"]["x_axis"]
     N_Z_STEPS_PER_PLANE = SCAN_SETUP["repetitions"]["z_steps_per_plane"]
 
@@ -107,9 +108,9 @@ if __name__ == "__main__":
     # Define the magnetic source
     D = SIMULATION_OBJECTS["system_under_test"]["diameter"]
     P = SIMULATION_OBJECTS["system_under_test"]["polarization"]
-    posx = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["x"]
-    posy = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["y"]
-    posz = SIMULATION_OBJECTS["system_under_test"]["position_mm"]["z"]
+    posx = SIMULATION_OBJECTS["system_under_test"]["position_m"]["x"]
+    posy = SIMULATION_OBJECTS["system_under_test"]["position_m"]["y"]
+    posz = SIMULATION_OBJECTS["system_under_test"]["position_m"]["z"]
     source_sphere = magpy.magnet.Sphere(
         position=(posx, posy, posz), polarization=P, diameter=D
     )
@@ -135,5 +136,7 @@ if __name__ == "__main__":
     random_point = np.random.randint(0, sampled_points.shape[0] // 2)
     print(f"\nCoordinate Point [{random_point}]:", sampled_points[random_point])
     print(f"B-field Vector   [{random_point}]:", B_field_data[random_point])
+    output_dir = FILES["output_dir"]
+    os.makedirs(output_dir, exist_ok=True) 
     np.save(bfield_filepath, B_field_data)
     np.save(scan_path_filepath, sampled_points)

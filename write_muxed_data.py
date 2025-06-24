@@ -47,7 +47,7 @@ def find_optimum_gain(arr):
     else:
         return gain2
 
-def convert_mm_to_ticks(a):
+def convert_m_to_ticks(a):
     # plucked this conversion factor out of thin air
     return a * 10000
 
@@ -68,7 +68,6 @@ if __name__ == "__main__":
     # read in data
     result = np.zeros(n_samples, dtype=generated_dtype)
     print(f"shape of result is {result.shape} and dtype is {result.dtype}")
-    inp = input("press any key to continue")
     sensor_number = 1
     for filename in filename_list:
         a = np.load(filename)
@@ -93,13 +92,13 @@ if __name__ == "__main__":
     scan_path = np.load(scan_path_filename)
     scan_path_selection = scan_path[0:n_samples,:]
     print(scan_path_selection.shape)
-    result["XPOS"] = convert_mm_to_ticks(scan_path_selection[:,0])
+    result["XPOS"] = convert_m_to_ticks(scan_path_selection[:,0])
     print(scan_path_selection[:,0])
     print(scan_path_selection[:,0].shape)
-    result["YPOS"] = convert_mm_to_ticks(scan_path_selection[:,1])
+    result["YPOS"] = convert_m_to_ticks(scan_path_selection[:,1])
     print(scan_path_selection[:,1])
     print(scan_path_selection[:,1].shape)
-    result["ZPOS"] = convert_mm_to_ticks(scan_path_selection[:,2])
+    result["ZPOS"] = convert_m_to_ticks(scan_path_selection[:,2])
     print(scan_path_selection[:,2])
     print(scan_path_selection[:,2].shape)
     result["CNT"] = np.linspace(0, n_samples, n_samples)

@@ -15,11 +15,11 @@ except FileNotFoundError:
 print("Accessing basic parameters")
 # Use dictionary key access to navigate the nested structure
 sensor_count = config["system_parameters"]["sensor_count"]
-max_velocity_y = config["motion_profile"]["max_velocity_mm_per_s"]["y"]
+max_velocity_y = config["motion_profile"]["max_velocity_m_per_s"]["y"]
 output_file = config["files"]["output_muxed_result"]
 
 print(f"Sensor count: {sensor_count}")
-print(f"Max y-axis velocity: {max_velocity_y} mm/s")
+print(f"Max y-axis velocity: {max_velocity_y} m/s")
 print(f"Output file: {output_file}")
 
 
