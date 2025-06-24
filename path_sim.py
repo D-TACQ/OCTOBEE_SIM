@@ -31,9 +31,9 @@ y_a = MOTION_PROFILE['acceleration_m_per_s2']['y']
 z_a = MOTION_PROFILE['acceleration_m_per_s2']['z']
 
 # All v in m/s
-x_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['x']
-y_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['y']
-z_maxv = MOTION_PROFILE['max_velocity_m_per_s2']['z']
+x_maxv = MOTION_PROFILE['max_velocity_m_per_s']['x']
+y_maxv = MOTION_PROFILE['max_velocity_m_per_s']['y']
+z_maxv = MOTION_PROFILE['max_velocity_m_per_s']['z']
 
 # time step is related to sample rate
 # sample rate in samples/s
@@ -48,11 +48,11 @@ sample_clock_start = SAMPLING["clock_start"]
 encoder_resolution = SYSTEM_PARAMETERS["encoder_resolution"]
 
 
-pos_y_sweep = np.array([0, 300, 0])
-pos_z_shift = np.array([0, 0, 15])
+pos_y_sweep = np.array([0, 0.300, 0])
+pos_z_shift = np.array([0, 0, 0.015])
 neg_y_sweep = -1 * pos_y_sweep
 neg_z_shift = -1 * pos_z_shift
-x_shift = np.array([10, 0, 0])
+x_shift = np.array([0.010, 0, 0])
 
 # dummy magnet
 # add a sphere that defines the system under test
@@ -215,7 +215,7 @@ def plot_path(path_history):
 
     magpy.show(obj_sphere, canvas=ax, style={"color": "grey", "opacity": 0.4})
     # Plot the path with a line and markers for each point
-    ax.plot(x_coords, y_coords, z_coords, marker=".", markersize=2, linestyle="-")
+    ax.plot(x_coords, y_coords, z_coords, marker=".", markersize=1, linestyle="-", linewidth=0.5)
     # Highlight the start and end points
     ax.scatter(
         x_coords[0], y_coords[0], z_coords[0], color="lime", s=100, label="Start"
