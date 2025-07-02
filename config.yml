@@ -11,7 +11,7 @@ files:
     - "data/B-field_zoff_25.npy"
     - "data/B-field_zoff_30.npy"
     - "data/B-field_zoff_35.npy"
-  output_muxed_result: "data/binary_data.bin"
+  output_muxed_result: "binary_data.bin"
 
 # System & Sensor Parameters
 system_parameters:
@@ -52,9 +52,9 @@ scan_setup:
     x_axis: 30
     z_steps_per_plane: 10
   scan_counts: # Number of scans in each direction
-    x: 1
-    y: 25
-    z: 25
+    x: 0
+    y: 3
+    z: 3
   durations_s:
     y_scan: 17.0
     z_scan: 11.0

@@ -80,5 +80,5 @@ if __name__ == "__main__":
         output_dir = FILES["output_dir"]
         os.makedirs(output_dir, exist_ok=True) 
         z_offset_file_tag = int(z_offset_value * 1000)
-        np.save(f"{output_dir}/B-field_zoff_{z_offset_value}.npy", B_field_data)
+        np.save(f"{output_dir}/B-field_zoff_{z_offset_file_tag}.npy", B_field_data)
         # np.save("simulated_path.npy", sampled_points)

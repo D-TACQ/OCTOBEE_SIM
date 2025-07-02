@@ -29,9 +29,17 @@ import numpy as np
 from config import SYSTEM_PARAMETERS
 
 
-def n_sensors_dtype_generator(n_sensors):
-    """
-    'S{n}X', S{n}Y', 'S{n}Z', 'S{n}T', "XPOS", "YPOS", "ZPOS", "CNT", "USEC", "USR1", "USR2", "USR3"
+def n_sensors_dtype_generator(n_sensors, position_included=True):
+    """Generates dtype string for writing and reading numpy structured arrays.
+
+    Args:
+        n_sensors (int): The number of sensors within the data
+        position_included (bool): True if X, Y, Z position fields to be
+        included in the data, False otherwise.
+
+    Returns:
+        str: a dtype definition of binary data format
+
     """
     if n_sensors < 1:
         raise ValueError("n_sensors must be integer > 0")
@@ -40,8 +48,10 @@ def n_sensors_dtype_generator(n_sensors):
         channel_def_strings += (
             f"('S{n}X','<i2'), ('S{n}Y','<i2'), ('S{n}Z','<i2'), ('S{n}T','<i2'),"
         )
-
-    final_strings = ["XPOS", "YPOS", "ZPOS", "CNT", "USEC", "USR1", "USR2", "USR3"]
+    if position_included:
+        final_strings = ["XPOS", "YPOS", "ZPOS", "CNT", "USEC", "USR1", "USR2", "USR3"]
+    else:
+        final_strings = ["CNT", "USEC", "USR1", "USR2", "USR3"]
 
     for n in final_strings:
         channel_def_strings += f" ('{n}','<i4'),"
@@ -61,10 +71,16 @@ def array_to_raw_binary_file(data, filename):
 if __name__ == "__main__":
     n_sensors = SYSTEM_PARAMETERS["sensor_count"]
     generated_dtype = n_sensors_dtype_generator(n_sensors)
+    generated_dtype_no_position = n_sensors_dtype_generator(
+        n_sensors, position_included=False
+    )
     print(generated_dtype)
+    print(generated_dtype_no_position)
     # Generating a dataset of zeros (but of the correct dtype)
     data = np.zeros(n_sensors, dtype=generated_dtype)
-    print(data)
+    data_no_position = np.zeros(n_sensors, dtype=generated_dtype_no_position)
+    print(data.shape)
+    print(data_no_position.shape)
 
     print("Accessing the USEC values in the results array")
     print(data["USEC"])
