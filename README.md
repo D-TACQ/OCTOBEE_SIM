@@ -99,7 +99,7 @@ The code used to generate the dtype string can be found in `data_writer.py` and 
 The files are read back in as numpy arrays that can be indexed by each named field (e.g. `mydata['USEC']`) and further plotted (with matplotlib, seaborn, plotly etc.) or analysed (with pandas, polars, scipy etc.).
 
 ### Low level data dumps
-*** Python users should use the python example [reading-binary-data](#reading-binary-data)
+** Python users should use the python example [reading-binary-data](#reading-binary-data) **
 
 At the lowest level, an example of the final binary output should look something like:
 
@@ -124,6 +124,23 @@ hexdump -e '32/2 "%5d," 8/4 "%08x," "\n"' <  data/binary_data.bin | cut -d, -f1-
 15558, 8612, 5365,15558,15716, 8958, 5276,15716
 ```
 
+e.g. show all 32 bit data (non AI) in hex
+```
+# XXXXXX,YYYYYYYY,ZZZZZZZZ,SC______,USEC____,USER2___,USER3___,USER4___
+
+hexdump -e '32/2 "%5d," 8/4 "%08x," "\n"' <  data/binary_data.bin | cut -d, -f33-40 | head
+00000000,00000000,00000000,00000000,00000000,00002222,00003333,00005555
+00000000,00000011,00000000,00000001,00000064,00002222,00003333,00005555
+00000000,00000023,00000000,00000002,000000c8,00002222,00003333,00005555
+00000000,00000034,00000000,00000003,0000012c,00002222,00003333,00005555
+00000000,00000046,00000000,00000004,00000190,00002222,00003333,00005555
+00000000,00000058,00000000,00000005,000001f4,00002222,00003333,00005555
+00000000,00000069,00000000,00000006,00000258,00002222,00003333,00005555
+00000000,0000007b,00000000,00000007,000002bc,00002222,00003333,00005555
+00000000,0000008d,00000000,00000008,00000320,00002222,00003333,00005555
+00000000,0000009e,00000000,00000009,00000384,00002222,00003333,00005555
+
+```
 e.g. Show X,Y,Z position, Sample Count & usec in decimal
 ```
 hexdump -e '32/2 "%5d," 8/4 "%10d," "\n"' <  data/binary_data.bin | cut -d, -f33-37 | head
